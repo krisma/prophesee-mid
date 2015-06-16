@@ -120,10 +120,12 @@ var initEach = function (symbol) {
 				function (callback) {
 					yahooFinance.snapshot({
 						symbol: symbol,
-						fields: ['p', 'c1', 'p2', 'm', 'w', 'o', 'v', 'j1', 'r', 'y', 'e7', 's1'],
+						fields: ['p', 'c1', 'p2'],
 					}, function (err, snapshot) {
 						if (err) return console.error(err);
-							callback(err, snapshot);
+						// str = str.replace(/"title":/g, '"name":');
+						delete snapshot['symbol']
+						callback(err, snapshot);
 					});
 				},
 				function (callback) {
@@ -132,7 +134,8 @@ var initEach = function (symbol) {
 						fields: ['m', 'w', 'o', 'v', 'j1', 'r', 'y', 'e7', 's1'],
 					}, function (err, snapshot) {
 						if (err) return console.error(err);
-							callback(err, snapshot);
+						delete snapshot['symbol']
+						callback(err, snapshot);
 					});
 				},
 				function (callback) {
