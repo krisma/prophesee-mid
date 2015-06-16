@@ -12,8 +12,8 @@ var async = require('async');
 var moment = require('moment');
 var fs = require('fs');
 var parse = require('csv').parse;
-mongoose.connect('mongodb://localhost:5000/');
-//mongoose.connect('mongodb://krisma:success@ds045511.mongolab.com:45511/heroku_z67qmbpr');
+//mongoose.connect('mongodb://localhost:5000/');
+mongoose.connect('mongodb://krisma:success@ds045511.mongolab.com:45511/heroku_z67qmbpr');
 
 
 

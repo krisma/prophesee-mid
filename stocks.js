@@ -138,8 +138,6 @@ var initEach = function (symbol) {
 				function (callback) {
 					yahooFinance.historical({
 						symbol: symbol,
-						from: '2015-01-01',
-						to: '2015-03-04',
 						fields: ['o', 'p', 'g', 'h'],
 					}, function (err, historical) {
 						if (err) return console.error(err);
