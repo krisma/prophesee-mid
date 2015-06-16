@@ -1,0 +1,14 @@
+{
+  "name": "prophesee-db",
+  "description": "Prophesee Data Server",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "async": "^1.2.1",
+    "csv": "^0.4.5",
+    "express": "^4.12.4",
+    "mongoose": "^4.0.5",
+    "should": "^6.0.3",
+    "yahoo-finance": "^0.2.11"
+  }
+}
