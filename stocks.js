@@ -11,7 +11,7 @@ var async = require('async');
 var fs = require('fs');
 var csv = require('csv');
 var parse = csv.parse;
-
+var moment = require('moment');
 // Get brief of stock(as symbol), if it doesn't exist, set one.
 var getOrSetBrief = function (symbol, callback) {
 	Stock.findOne({ symbol: symbol }, function (err, stock) {
@@ -139,7 +139,7 @@ var initEach = function (symbol) {
 					yahooFinance.historical({
 						symbol: symbol,
 						from: '2015-01-01',
-						to: new Date(),
+						to: '2015-03-04',
 						fields: ['o', 'p', 'g', 'h'],
 					}, function (err, historical) {
 						if (err) return console.error(err);
@@ -157,18 +157,53 @@ var initEach = function (symbol) {
 				}
 			],
 			function (err, results) {
-				var tmp = new Stock({ symbol: symbol, brief: results[0], detail: results[1], history: results[2] })
+				var history = results[2];
+				var tmp = new Stock({ symbol: symbol, brief: results[0], detail: results[1], history: history, last: history[history.length - 1].date })
 				tmp.save(function (err) {
 			  	if (err)
 			  		console.log('unsaved');
 				});	
-				console.log();
 			});
 		} else {
 			console.log('initEach - Exists.');
 		};
 	});
-}
+};
+
+var updateEach = function(symbol) {
+	Stock.findOne({symbol: symbol}, function (err, stock) {
+		if (err) return console.error(err);
+		if (stock == null) {
+			console.log('null');
+		} else {
+			yahooFinance.historical({
+			symbol: symbol,
+			from: moment(stock.last).add(1, 'days').toDate(),
+			to: new Date(),
+			fields: ['o', 'p', 'g', 'h'],
+			}, 
+			function (err, historical) {
+				if (err) return console.error(err);
+				async.each(historical,
+				function (entry, callback) {
+					delete entry['symbol'];
+					delete entry['adjClose'];
+				},
+				function (err, callback) {
+					if (err) return console.error(err);
+				});
+				var tmp = stock.history;
+				console.log(tmp);
+
+				var replace = tmp.concat(historical);
+				stock.history = replace;
+				stock.last = replace[replace.length - 1].date;
+				stock.save();
+				console.log('Saved');
+			});
+		};
+	});
+};
 
 
 
@@ -180,5 +215,6 @@ module.exports = {
 	getOrSetHistory: getOrSetHistory,
 	initAll: initAll,
 	initEach: initEach,
+	updateEach: updateEach
 };
 

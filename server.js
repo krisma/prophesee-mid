@@ -1,18 +1,19 @@
 var http = require('http');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema
-  , ObjectId = Schema.ObjectId;
+, ObjectId = Schema.ObjectId;
 var Stock = require('./stock.js');
 var Stocks = require('./stocks.js');
 var yahooFinance = require('yahoo-finance');
 
 var express = require('express');
 var app = express();
-
-
+var async = require('async');
+var moment = require('moment');
 var fs = require('fs');
 var parse = require('csv').parse;
-mongoose.connect('mongodb://krisma:success@ds045511.mongolab.com:45511/heroku_z67qmbpr');
+mongoose.connect('mongodb://localhost:5000/');
+//mongoose.connect('mongodb://krisma:success@ds045511.mongolab.com:45511/heroku_z67qmbpr');
 
 
 
@@ -33,13 +34,7 @@ app.get('/getDetail/:symbol', function (req, res) {
 	});
 });
 app.get('/getHistory/:symbol', function (req, res) {
-	// Stocks.init('./sample.csv', 3);
 	Stocks.getOrSetHistory(req.params.symbol, function (rtn) {
-		res.send(rtn);
-	});
-});
-app.get('/getBrief/:symbol', function (req, res) {
-	Stocks.getOrSetBrief(req.params.symbol, function (rtn) {
 		res.send(rtn);
 	});
 });
@@ -49,18 +44,20 @@ app.get('/initAll', function (req, res) {
 app.get('/initEach', function (req, res) {
 	Stocks.initEach(req.params.symbol);
 });
+app.get('/updateEach/:symbol', function (req, res) {
+	Stocks.updateEach(req.params.symbol);
+});
 
 
 
 
 
+var server = app.listen(process.env.PORT || 8080, function () {
 
-var server = app.listen(process.env.PORT || 5000, function () {
-
-  var host = server.address().address;
-  var port = server.address().port;
+	var host = server.address().address;
+	var port = server.address().port;
 
 
-  console.log('Prophesee server app listening at http://%s:%s', host, port);
+	console.log('Prophesee server app listening at http://%s:%s', host, port);
 
 });
